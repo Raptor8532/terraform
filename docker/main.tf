@@ -8,7 +8,7 @@ terraform {
 provider "docker" {
 }
 
-resource null_resource dockervol {
+resource "null_resource" "dockervol" {
 
   provisioner "local-exec" {
     command = "mkdir noderedvol/ || true && chown -R 1000:1000 noderedvol/"
@@ -17,7 +17,7 @@ resource null_resource dockervol {
 
 
 resource "docker_image" "nodered_image" {
-  name = "nodered/node-red:latest"
+  name = lookup(var.image, terraform.workspace, "nodered/node-red:latest")
 }
 
 resource "random_string" "random" {
@@ -29,14 +29,14 @@ resource "random_string" "random" {
 
 resource "docker_container" "nodered_container" {
   count = local.container_count
-  name  = join("-", ["nodered", random_string.random[count.index].result])
+  name  = join("-", ["nodered", terraform.workspace, random_string.random[count.index].result])
   image = docker_image.nodered_image.image_id
   ports {
     internal = var.int_port
-    external = var.ext_port[count.index]
+    external = var.ext_port[terraform.workspace][count.index]
   }
   volumes {
     container_path = "/data"
-    host_path = "/home/deltaro/labs/Terraform/udemy/terraform-docker/noderedvol"
+    host_path      = "${path.cwd}/noderedvol"
   }
 }
