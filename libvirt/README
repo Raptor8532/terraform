@@ -1,0 +1,3 @@
+Install localy VM
+
+TERRAFORM_LIBVIRT_TEST_DOMAIN_TYPE=qemu terraform apply

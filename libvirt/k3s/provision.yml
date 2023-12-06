@@ -1,0 +1,23 @@
+---
+- hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    timezone: Europe/Paris
+
+  tasks:
+    - name: install packages
+      ansible.builtin.package:
+        state: present
+        name:
+          - tar
+          - unzip
+          - python3-pip
+          - git
+          - htop
+          - net-tools
+    - name: set as default locale
+      ansible.builtin.command: localectl set-locale LANG=en_US.UTF-8
+    - name: Set timezone
+      community.general.timezone:
+        name: "{{ timezone }}"
