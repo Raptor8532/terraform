@@ -1,9 +1,4 @@
-# output "ip-address" {
-#   value       = module.container[*].container-name
-#   description = "The ip address of the container"
-# }
-
-# output "container-name" {
-#   value       = module.container[*].ip-address
-#   description = "The name of the containers"
-# }
+output application_access {
+  value       = [for x in module.container[*]: x]
+  description = "The name and port for each application."
+}
